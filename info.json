@@ -1,0 +1,22 @@
+{
+  "name": "autotech",
+  "version": "0.1.0",
+  "factorio_version": "2.0",
+  "title": "Dependency graph library",
+  "author": "Quintuple5, Shadowglass, Notnotmelon",
+  "contact": "https://discord.gg/SBHM3h5Utj",
+  "homepage": "https://github.com/Septiple/autotech",
+  "description": "Generates a graph representation of the various dependencies of Factorio for use in other mods.",
+  "dependencies": [
+    "base >= 2.0.0"
+  ],
+  "package": {
+    "ignore": [],
+    "scripts": {}
+  },
+  "quality_required": false,
+  "space_travel_required": false,
+  "spoiling_required": false,
+  "freezing_required": false,
+  "segmented_units_required": false
+}
