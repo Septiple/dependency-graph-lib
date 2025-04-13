@@ -1,11 +1,11 @@
 {
-  "name": "autotech",
+  "name": "dependency-graph-lib",
   "version": "0.1.0",
   "factorio_version": "2.0",
   "title": "Dependency graph library",
   "author": "Quintuple5, Shadowglass, Notnotmelon",
   "contact": "https://discord.gg/SBHM3h5Utj",
-  "homepage": "https://github.com/Septiple/autotech",
+  "homepage": "https://github.com/Septiple/dependency-graph-lib",
   "description": "Generates a graph representation of the various dependencies of Factorio for use in other mods.",
   "dependencies": [
     "base >= 2.0.0"

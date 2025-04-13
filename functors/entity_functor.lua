@@ -79,7 +79,7 @@ function (object, requirement_nodes, object_nodes)
     object_node_functor:add_fulfiller_for_object_requirement(object, entity.corpse, object_types.entity, entity_requirements.instantiate, object_nodes)
 
     -- Support for PyAL-style module requirements
-    if entity.autotech_force_require_module_categories then
+    if entity.dependency_graph_lib_force_require_module_categories then
         object_node_functor:add_typed_requirement_to_object(object, entity.allowed_module_categories, requirement_types.module_category, requirement_nodes)
     end
 

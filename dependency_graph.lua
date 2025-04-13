@@ -92,7 +92,7 @@ function dependency_graph:run()
         self:run_phase(self.run_custom_mod_dependencies, "custom mod dependencies")
         self:run_phase(self.linearise_recipe_graph, "recipe graph linearisation")
         self:run_phase(self.verify_victory_reachable_recipe_graph, "verify victory reachable in recipe graph")
-    end, "autotech")
+    end, "dependency graph creation")
 end
 
 function dependency_graph:create_nodes()
@@ -252,7 +252,7 @@ function dependency_graph:verify_victory_reachable_recipe_graph()
     if victory_reachable then
         log("The game can be won with the current mods.")
     else
-        error("Error: no victory condition can be reached. It's possible that this is a mod not informing autotech about dependencies introduced in the mod correctly or a bug in autotech.")
+        error("Error: no victory condition can be reached. It's possible that this is a mod not informing dependency-graph-lib about dependencies introduced in the mod correctly or a bug in dependency-graph-lib.")
     end
 end
 
