@@ -39,6 +39,7 @@ functor_map[object_types.tile] = tile_functor
 functor_map[object_types.victory] = victory_functor
 
 --- @class dependency_graph
+--- @field private data_raw any
 --- @field private configuration Configuration
 --- @field private object_nodes ObjectNodeStorage
 --- @field private requirement_nodes RequirementNodeStorage
@@ -47,10 +48,11 @@ dependency_graph.__index = dependency_graph
 
 ---@param configuration Configuration
 ---@return dependency_graph
-function dependency_graph.create(configuration)
+function dependency_graph.create(data_raw, configuration)
     local result = {}
     setmetatable(result, dependency_graph)
 
+    result.data_raw = data_raw
     result.configuration = configuration
     result.object_nodes = object_node_storage:new()
     result.requirement_nodes = requirement_node_storage:new()
@@ -128,36 +130,36 @@ function dependency_graph:create_nodes()
         end
     end
 
-    process_requirement_type(data.raw["ammo-category"], requirement_types.ammo_category)
-    process_requirement_type(data.raw["equipment-grid"], requirement_types.equipment_grid)
-    process_requirement_type(data.raw["fuel-category"], requirement_types.fuel_category)
-    process_requirement_type(data.raw["recipe-category"], requirement_types.recipe_category)
-    process_requirement_type(data.raw["resource-category"], requirement_types.resource_category)
+    process_requirement_type(self.data_raw["ammo-category"], requirement_types.ammo_category)
+    process_requirement_type(self.data_raw["equipment-grid"], requirement_types.equipment_grid)
+    process_requirement_type(self.data_raw["fuel-category"], requirement_types.fuel_category)
+    process_requirement_type(self.data_raw["recipe-category"], requirement_types.recipe_category)
+    process_requirement_type(self.data_raw["resource-category"], requirement_types.resource_category)
 
-    process_object_types(data.raw["autoplace-control"], autoplace_control_functor)
-    process_object_types(data.raw["fish"], autoplace_control_functor)
-    process_object_types(data.raw["simple-entity"], autoplace_control_functor)
-    process_object_types(data.raw["fluid"], fluid_functor)
-    process_object_types(data.raw["recipe"], recipe_functor)
-    process_object_types(data.raw["technology"], technology_functor)
-    process_object_types(data.raw["planet"], planet_functor)
-    process_object_types(data.raw["tile"], tile_functor)
+    process_object_types(self.data_raw["autoplace-control"], autoplace_control_functor)
+    process_object_types(self.data_raw["fish"], autoplace_control_functor)
+    process_object_types(self.data_raw["simple-entity"], autoplace_control_functor)
+    process_object_types(self.data_raw["fluid"], fluid_functor)
+    process_object_types(self.data_raw["recipe"], recipe_functor)
+    process_object_types(self.data_raw["technology"], technology_functor)
+    process_object_types(self.data_raw["planet"], planet_functor)
+    process_object_types(self.data_raw["tile"], tile_functor)
 
     for item_type in pairs(defines.prototypes.item) do
-        process_object_types(data.raw[item_type], item_functor)
+        process_object_types(self.data_raw[item_type], item_functor)
     end
 
     local module_categories = {}
-    for _, module in pairs(data.raw.module) do
+    for _, module in pairs(self.data_raw.module) do
         module_categories[module.category] = true
     end
 
     -- asteroid chunks are actually not entities however they define standard minable properties.
-    process_object_types(data.raw["asteroid-chunk"], entity_functor)
+    process_object_types(self.data_raw["asteroid-chunk"], entity_functor)
     for entity_type in pairs(defines.prototypes.entity) do
-        process_object_types(data.raw[entity_type], entity_functor)
+        process_object_types(self.data_raw[entity_type], entity_functor)
 
-        for _, entity in pairs(data.raw[entity_type] or {}) do
+        for _, entity in pairs(self.data_raw[entity_type] or {}) do
             if entity.allowed_module_categories then
                 for _, category in pairs(entity.allowed_module_categories) do
                     module_categories[category] = true

@@ -33,11 +33,11 @@ _G.data = {}
 ---@type string
 local content_as_string = f:read("*all")
 f:close()
-data.raw = json.parse(content_as_string)
+local data_raw = json.parse(content_as_string)
 
 print("Invoking dependency graph...")
 
-local graph = dependency_graph.create {verbose_logging = true}
+local graph = dependency_graph.create(data_raw, {verbose_logging = true})
 graph:run()
 
 print("Finished test")
