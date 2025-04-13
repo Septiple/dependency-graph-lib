@@ -1,8 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 2025-04-13
+  Info:
+    - Now correctly deals with entities with in or output fluid boxes with filters.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 2025-04-13
   Info:
-    - No longer uses data.raw directly, but instead takes data_raw as a parameter
+    - No longer uses data.raw directly, but instead takes data_raw as a parameter.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.0
 Date: 2025-04-13

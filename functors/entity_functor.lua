@@ -51,6 +51,17 @@ function (object, requirement_nodes)
             requirement_node:add_new_object_dependent_requirement(entity_requirements.required_fluid, object, requirement_nodes, object.configuration)
         end
     end
+
+    local fluid_boxes = entity.fluid_boxes or {}
+    if entity.fluid_box then table.insert(fluid_boxes, entity.fluid_box) end
+    if entity.output_fluid_box then table.insert(fluid_boxes, entity.output_fluid_box) end
+    for _, fluid_box in pairs(fluid_boxes) do
+        if fluid_box.filter then
+            if fluid_box.production_type == "input" then
+                requirement_node:add_new_object_dependent_requirement(entity_requirements.required_fluid .. "_" .. fluid_box.filter, object, requirement_nodes, object.configuration)
+            end
+        end
+    end
 end,
 function (object, requirement_nodes, object_nodes)
     local entity = object.object
@@ -108,18 +119,18 @@ function (object, requirement_nodes, object_nodes)
 --     end
     object_node_functor:add_fulfiller_for_typed_requirement(object, entity.crafting_categories, requirement_types.recipe_category, requirement_nodes)
 
-    --     local fluid_boxes = entity.fluid_boxes or {}
-    --     if entity.fluid_box then table.insert(fluid_boxes, entity.fluid_box) end
-    --     if entity.output_fluid_box then table.insert(fluid_boxes, entity.output_fluid_box) end
-    --     for _, fluid_box in pairs(fluid_boxes) do
-    --         if fluid_box.filter then
-    --             if fluid_box.production_type == "input" then
-    --                 self:add_dependency(nodes, node_types.fluid_node, fluid_box.filter, "requires fluid input", entity_verbs.required_fluid)
-    --             elseif fluid_box.production_type == "output" then
-    --                 self:add_disjunctive_dependent(nodes, node_types.fluid_node, fluid_box.filter, "produces fluid output", fluid_verbs.create)
-    --             end
-    --         end
-    --     end
+    local fluid_boxes = entity.fluid_boxes or {}
+    if entity.fluid_box then table.insert(fluid_boxes, entity.fluid_box) end
+    if entity.output_fluid_box then table.insert(fluid_boxes, entity.output_fluid_box) end
+    for _, fluid_box in pairs(fluid_boxes) do
+        if fluid_box.filter then
+            if fluid_box.production_type == "input" then
+                object_node_functor:reverse_add_fulfiller_for_object_requirement(object, entity_requirements.required_fluid .. "_" .. fluid_box.filter, fluid_box.filter, object_types.fluid, object_nodes)
+            elseif fluid_box.production_type == "output" then
+                object_node_functor:add_fulfiller_for_object_requirement(object, fluid_box.filter, object_types.fluid, fluid_requirements.create, object_nodes)
+            end
+        end
+    end
     
     --     if entity.type == "reactor" or entity.type == "heat-interface" then
     --         self:add_disjunctive_dependent(nodes, node_types.electricity_node, "heat", "generates heat", electricity_verbs.heat)
