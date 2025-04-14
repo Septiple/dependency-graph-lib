@@ -191,16 +191,25 @@ end
 ---@param name string?
 ---@param requirement_type RequirementType
 ---@param requirement_nodes RequirementNodeStorage
-function object_node_functor:add_typed_requirement_to_object(object, name, requirement_type, requirement_nodes)
-    if name == nil then
+function object_node_functor:add_typed_requirement_to_object(object, nameOrTable, requirement_type, requirement_nodes)
+    local function actualWork(name)
+        local descriptor = requirement_descriptor:new_typed_requirement_descriptor(name, requirement_type)
+        local requirement = requirement_nodes:find_requirement_node(descriptor)
+        if requirement == nil then
+            error("Cannot find requirement " .. descriptor.printable_name)
+        end
+        object:add_requirement(requirement)
+    end
+    if nameOrTable == nil then
         return
     end
-    local descriptor = requirement_descriptor:new_typed_requirement_descriptor(name, requirement_type)
-    local requirement = requirement_nodes:find_requirement_node(descriptor)
-    if requirement == nil then
-        error("Cannot find requirement " .. descriptor.printable_name)
+    if type(nameOrTable) == "table" then
+        for _, name in pairs(nameOrTable) do
+            actualWork(name)
+        end
+    else
+        actualWork(nameOrTable)
     end
-    object:add_requirement(requirement)
 end
 
 ---@param requirement RequirementNode

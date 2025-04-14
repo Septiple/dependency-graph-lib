@@ -46,10 +46,12 @@ function (object, requirement_nodes)
     requirement_node:add_new_object_dependent_requirement(entity_requirements.instantiate, object, requirement_nodes, object.configuration)
 
     local minable = entity.minable
-    if minable ~= nil then
-        if minable.required_fluid then
-            requirement_node:add_new_object_dependent_requirement(entity_requirements.required_fluid, object, requirement_nodes, object.configuration)
-        end
+    if minable and minable.required_fluid then
+        requirement_node:add_new_object_dependent_requirement(entity_requirements.required_fluid, object, requirement_nodes, object.configuration)
+    end
+
+    if entity.energy_source and entity.energy_source.type == "fluid" and entity.energy_source.fluid_box.filter then
+        requirement_node:add_new_object_dependent_requirement(entity_requirements.required_burnable_fluid, object, requirement_nodes, object.configuration)
     end
 
     local fluid_boxes = entity.fluid_boxes or {}
@@ -75,7 +77,6 @@ function (object, requirement_nodes, object_nodes)
     
     local minable = entity.minable
     if minable ~= nil then
-        --self:add_dependency(nodes, node_types.fluid_node, minable.required_fluid, "required fluid", "mine")
         object_node_functor:add_fulfiller_to_productlike_object(object, minable.results or minable.result, object_nodes)
         if minable.required_fluid then
             object_node_functor:reverse_add_fulfiller_for_object_requirement(object, entity_requirements.required_fluid, minable.required_fluid, object_types.fluid, object_nodes)
@@ -94,29 +95,33 @@ function (object, requirement_nodes, object_nodes)
         object_node_functor:add_typed_requirement_to_object(object, entity.allowed_module_categories, requirement_types.module_category, requirement_nodes)
     end
 
---     if entity.energy_source then
---         local energy_source = entity.energy_source
---         local type = energy_source.type
---         if type == "electric" then
---             if is_energy_generator[entity.type] then
---                 self:add_disjunctive_dependent(nodes, node_types.electricity_node, 1, "generates electricity", electricity_verbs.generate)
---             else
---                 self:add_dependency(nodes, node_types.electricity_node, 1, "requires energy", entity_verbs.power)
---             end
---         elseif type == "burner" then
---             self:add_disjunctive_dependency(nodes, node_types.fuel_category_node, energy_source.fuel_category, "requires fuel", entity_verbs.fuel)
---             self:add_disjunctive_dependency(nodes, node_types.fuel_category_node, energy_source.fuel_categories, "requires fuel", entity_verbs.fuel)
---         elseif type == "heat" then
---             self:add_dependency(nodes, node_types.electricity_node, "heat", "requires a heat source", entity_verbs.heat)
---         elseif type == "fluid" then
---         else
---             assert(type == "void", "Unknown energy source type")
---         end
---     end
+    if entity.energy_source then
+        local energy_source = entity.energy_source
+        local type = energy_source.type
+        if type == "electric" then
+            -- if is_energy_generator[entity.type] then
+            --     self:add_disjunctive_dependent(nodes, node_types.electricity_node, 1, "generates electricity", electricity_verbs.generate)
+            -- else
+            --     self:add_dependency(nodes, node_types.electricity_node, 1, "requires energy", entity_verbs.power)
+            -- end
+        elseif type == "burner" then
+            object_node_functor:add_typed_requirement_to_object(object, energy_source.fuel_categories, requirement_types.fuel_category, requirement_nodes)
+        elseif type == "heat" then
+            object_node_functor:add_independent_requirement_to_object(object, requirement_types.heat, requirement_nodes)
+        elseif type == "fluid" then
+            if energy_source.fluid_box.filter then
+                object_node_functor:reverse_add_fulfiller_for_object_requirement(object, entity_requirements.required_fluid, energy_source.fluid_box.filter, object_types.fluid, object_nodes)
+            else
+                object_node_functor:add_independent_requirement_to_object(object, requirement_types.fluid_with_fuel_value, requirement_nodes)
+            end
+        else
+            assert(type == "void", "Unknown energy source type")
+        end
+    end
 
---     if entity.burner then
---         self:add_disjunctive_dependency(nodes, node_types.fuel_category_node, entity.burner.fuel_categories, "requires fuel", entity_verbs.fuel)
---     end
+    if entity.burner then
+        object_node_functor:add_typed_requirement_to_object(object, entity.burner.fuel_categories, requirement_types.fuel_category, requirement_nodes)
+    end
     object_node_functor:add_fulfiller_for_typed_requirement(object, entity.crafting_categories, requirement_types.recipe_category, requirement_nodes)
 
     local fluid_boxes = entity.fluid_boxes or {}
