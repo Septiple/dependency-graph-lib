@@ -187,7 +187,7 @@ end
 
 function dependency_graph:run_custom_mod_dependencies()
     -- For now, this just adds vanilla startup stuff
-    local starting_items = {
+    local starting_items = self.configuration.starting_items or {
         "iron-plate",
         "wood",
         "pistol",
@@ -206,6 +206,12 @@ function dependency_graph:run_custom_mod_dependencies()
     item_functor:add_fulfiller_for_object_requirement(self.start_node, "nauvis", object_types.planet, planet_requirements.visit, self.object_nodes)
 
     victory_functor:add_fulfiller_for_independent_requirement(self.object_nodes:find_object_node(object_node_descriptor:new("satellite", object_types.item)), requirement_types.victory, self.requirement_nodes)
+
+    if self.configuration.skip_custom_callbacks then
+        for _, customFun in pairs(_G.dependency_graph_lib_custom_callbacks) do
+            customFun(self)
+        end
+    end
 end
 
 function dependency_graph:linearise_recipe_graph()

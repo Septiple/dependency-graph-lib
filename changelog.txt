@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.4
+Date: 2025-04-15
+  Info:
+    - Added the dependency_graph_lib_register_custom_callback global callback so mods can add their own custom requirements.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.3
 Date: 2025-04-14
   Info:

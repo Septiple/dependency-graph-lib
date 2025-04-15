@@ -1,6 +1,6 @@
 --- @meta
 
---- @alias Configuration { verbose_logging: boolean }
+--- @alias Configuration { starting_items: string[]?, verbose_logging: boolean, skip_custom_callbacks: boolean? }
 
 --- @alias RequirementsRegistryFunction fun(object: ObjectNode, requirement_nodes: RequirementNodeStorage)
 --- @alias DependencyRegistryFunction fun(object: ObjectNode, requirement_nodes: RequirementNodeStorage, object_nodes: ObjectNodeStorage)
