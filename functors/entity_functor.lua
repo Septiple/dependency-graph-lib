@@ -31,14 +31,14 @@ local technology_requirements = require "requirements.technology_requirements"
 --     ["train-stop"] = true,
 -- }
 
--- local is_energy_generator = {
---     ["fusion-generator"] = true,
---     ["solar-panel"] = true,
---     ["burner-generator"] = true,
---     ["generator"] = true,
---     ["electric-energy-interface"] = true,
---     ["lightning-attractor"] = true,
--- }
+local is_energy_generator = {
+    ["fusion-generator"] = true,
+    ["solar-panel"] = true,
+    ["burner-generator"] = true,
+    ["generator"] = true,
+    ["electric-energy-interface"] = true,
+    ["lightning-attractor"] = true,
+}
 
 local entity_functor = object_node_functor:new(object_types.entity,
 function (object, requirement_nodes)
@@ -99,11 +99,11 @@ function (object, requirement_nodes, object_nodes)
         local energy_source = entity.energy_source
         local type = energy_source.type
         if type == "electric" then
-            -- if is_energy_generator[entity.type] then
-            --     self:add_disjunctive_dependent(nodes, node_types.electricity_node, 1, "generates electricity", electricity_verbs.generate)
-            -- else
-            --     self:add_dependency(nodes, node_types.electricity_node, 1, "requires energy", entity_verbs.power)
-            -- end
+            if is_energy_generator[entity.type] then
+                object_node_functor:add_fulfiller_for_independent_requirement(object, requirement_types.electricity, requirement_nodes)
+            else
+                object_node_functor:add_independent_requirement_to_object(object, requirement_types.electricity, requirement_nodes)
+            end
         elseif type == "burner" then
             object_node_functor:add_typed_requirement_to_object(object, energy_source.fuel_categories, requirement_types.fuel_category, requirement_nodes)
         elseif type == "heat" then
@@ -137,9 +137,9 @@ function (object, requirement_nodes, object_nodes)
         end
     end
     
-    --     if entity.type == "reactor" or entity.type == "heat-interface" then
-    --         self:add_disjunctive_dependent(nodes, node_types.electricity_node, "heat", "generates heat", electricity_verbs.heat)
-    --     end
+    if entity.type == "reactor" or entity.type == "heat-interface" then
+        object_node_functor:add_fulfiller_for_independent_requirement(object, requirement_types.heat, requirement_nodes)
+    end
 
     if entity.type == "lab" then
         local inputs = entity.inputs
