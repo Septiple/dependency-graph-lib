@@ -3,6 +3,7 @@ Version: 0.1.5
 Date: 2025-04-16
   Info:
     - Now deals with electric generation and consumption, as well as heat generation.
+    - Now deals with autoplace of entities based on autoplace controls.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.4
 Date: 2025-04-15
