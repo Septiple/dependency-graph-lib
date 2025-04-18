@@ -83,10 +83,11 @@ function (object, requirement_nodes, object_nodes)
         end
     end
     
-    object_node_functor:add_fulfiller_for_object_requirement(object, entity.remains_when_mined, object_types.entity, entity_requirements.instantiate, object_nodes)
     if entity.placeable_by then
         object_node_functor:reverse_add_fulfiller_for_object_requirement(object, entity_requirements.instantiate, entity.placeable_by.item, object_types.item, object_nodes)
     end
+    object_node_functor:add_fulfiller_for_object_requirement(object, entity.remains_when_mined, object_types.entity, entity_requirements.instantiate, object_nodes)
+    object_node_functor:add_fulfiller_for_object_requirement(object, entity.dying_explosion, object_types.entity, entity_requirements.instantiate, object_nodes)
     object_node_functor:add_fulfiller_for_object_requirement(object, entity.loot, object_types.item, item_requirements.create, object_nodes)
     object_node_functor:add_fulfiller_for_object_requirement(object, entity.corpse, object_types.entity, entity_requirements.instantiate, object_nodes)
 
@@ -203,6 +204,11 @@ function (object, requirement_nodes, object_nodes)
     
     if entity.autoplace then
         object_node_functor:reverse_add_fulfiller_for_object_requirement(object, entity_requirements.instantiate, entity.autoplace.control or entity.name, object_types.autoplace_control, object_nodes)
+    end
+
+    for _, unit_spawn_definition in pairs(entity.result_units or {}) do
+        local unit = unit_spawn_definition.unit or unit_spawn_definition[1]
+        object_node_functor:add_fulfiller_for_object_requirement(object, unit, object_types.entity, entity_requirements.instantiate, object_nodes)
     end
 end)
 return entity_functor
