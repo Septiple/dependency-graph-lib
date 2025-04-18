@@ -5,6 +5,7 @@ local requirement_types = require "requirement_nodes.requirement_types"
 local item_requirements = require "requirements.item_requirements"
 local entity_requirements = require "requirements.entity_requirements"
 local tile_requirements = require "requirements.tile_requirements"
+local action_handler = require "functors.action_handler"
 
 local item_functor = object_node_functor:new(object_types.item,
 function (object, requirement_nodes)
@@ -32,21 +33,7 @@ function (object, requirement_nodes, object_nodes)
         if attack_parameters then
             local ammo_type = attack_parameters.ammo_type
             if ammo_type then
-                local action = ammo_type.action or {}
-                if not action[1] then
-                    action = {action}
-                end
-                for _, a_d in pairs(action) do
-                    local action_delivery = a_d.action_delivery
-                    if action_delivery then
-                        if not action_delivery[1] then
-                            action_delivery = {action_delivery}
-                        end
-                        for _, a in pairs(action_delivery) do
-                            object_node_functor:add_fulfiller_for_object_requirement(object, a.projectile, object_types.entity, entity_requirements.instantiate, object_nodes)
-                        end
-                    end
-                end
+                action_handler(ammo_type.action, object_node_functor, object, object_nodes)
             end
         end
     end
