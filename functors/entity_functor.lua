@@ -6,7 +6,7 @@ local item_requirements = require "requirements.item_requirements"
 local entity_requirements = require "requirements.entity_requirements"
 local fluid_requirements = require "requirements.fluid_requirements"
 local technology_requirements = require "requirements.technology_requirements"
-local action_handler = require "functors.action_handler"
+local common_type_handlers = require "functors.common_type_handlers"
 
 -- local is_nonelevated_rail = {
 --     ["curved-rail-a"] = true,
@@ -213,10 +213,8 @@ function (object, requirement_nodes, object_nodes)
         object_node_functor:add_fulfiller_for_object_requirement(object, unit, object_types.entity, entity_requirements.instantiate, object_nodes)
     end
 
-    if entity.type == "projectile" then
-        
-        action_handler(entity.action, object_node_functor, object, object_nodes)
-        action_handler(entity.final_action, object_node_functor, object, object_nodes)
-    end
+    common_type_handlers:handle_action(entity.action, object_node_functor, object, object_nodes)
+    common_type_handlers:handle_action(entity.final_action, object_node_functor, object, object_nodes)
+    common_type_handlers:handle_attack_parameters(entity.attack_parameters, object_node_functor, object, object_nodes)
 end)
 return entity_functor

@@ -1,11 +1,35 @@
 local entity_requirements = require "requirements.entity_requirements"
 local object_types = require "object_nodes.object_types"
 
+---@class CommonTypeHandlers
+local common_type_handlers = {}
+common_type_handlers.__index = common_type_handlers
+
+---@return CommonTypeHandlers
+function common_type_handlers:new()
+    local result = {}
+    setmetatable(result, self)
+    return result
+end
+
+---@param attack_parameters any
+---@param object_node_functor ObjectNodeFunctor
+---@param object ObjectNode
+---@param object_nodes ObjectNodeStorage
+function common_type_handlers:handle_attack_parameters(attack_parameters, object_node_functor, object, object_nodes)
+    if attack_parameters then
+        local ammo_type = attack_parameters.ammo_type
+        if ammo_type then
+            self:handle_action(ammo_type.action, object_node_functor, object, object_nodes)
+        end
+    end
+end
+
 ---@param action any
 ---@param object_node_functor ObjectNodeFunctor
 ---@param object ObjectNode
 ---@param object_nodes ObjectNodeStorage
-return function(action, object_node_functor, object, object_nodes)
+function common_type_handlers:handle_action(action, object_node_functor, object, object_nodes)
     if action == nil then
         return
     end
@@ -20,6 +44,7 @@ return function(action, object_node_functor, object, object_nodes)
             end
             for _, a in pairs(action_delivery) do
                 object_node_functor:add_fulfiller_for_object_requirement(object, a.projectile, object_types.entity, entity_requirements.instantiate, object_nodes)
+                object_node_functor:add_fulfiller_for_object_requirement(object, a.stream, object_types.entity, entity_requirements.instantiate, object_nodes)
 
                 local function handle_trigger_effects(trigger_effects)
                     if trigger_effects == nil then
@@ -39,3 +64,5 @@ return function(action, object_node_functor, object, object_nodes)
         end
     end
 end
+
+return common_type_handlers

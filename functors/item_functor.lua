@@ -5,7 +5,7 @@ local requirement_types = require "requirement_nodes.requirement_types"
 local item_requirements = require "requirements.item_requirements"
 local entity_requirements = require "requirements.entity_requirements"
 local tile_requirements = require "requirements.tile_requirements"
-local action_handler = require "functors.action_handler"
+local common_type_handlers = require "functors.common_type_handlers"
 
 local item_functor = object_node_functor:new(object_types.item,
 function (object, requirement_nodes)
@@ -29,13 +29,7 @@ function (object, requirement_nodes, object_nodes)
     elseif item.type == "module" then
         object_node_functor:add_fulfiller_for_typed_requirement(object, item.category, requirement_types.module_category, requirement_nodes)
     elseif item.type == "capsule" then
-        local attack_parameters = item.capsule_action.attack_parameters
-        if attack_parameters then
-            local ammo_type = attack_parameters.ammo_type
-            if ammo_type then
-                action_handler(ammo_type.action, object_node_functor, object, object_nodes)
-            end
-        end
+        common_type_handlers:handle_attack_parameters(item.capsule_action.attack_parameters, object_node_functor, object, object_nodes)
     end
 
     if item.place_as_tile then

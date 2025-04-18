@@ -6,6 +6,7 @@ Date: 2025-04-18
     - Now deals with entity.folded_state_corpse.
     - Now deals with capsule thrown entities.
     - Now deals with spawned enemies.
+    - Now deals with turret shooting effects.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.5
 Date: 2025-04-16
