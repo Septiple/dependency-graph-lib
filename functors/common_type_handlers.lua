@@ -55,6 +55,9 @@ function common_type_handlers:handle_action(action, object_node_functor, object,
                     end
                     for _, trigger_effect in pairs(trigger_effects) do
                         object_node_functor:add_fulfiller_for_object_requirement(object, trigger_effect.entity_name, object_types.entity, entity_requirements.instantiate, object_nodes)
+
+                        -- handle nested results
+                        self:handle_action(trigger_effect.action, object_node_functor, object, object_nodes)
                     end
                 end
 
