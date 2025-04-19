@@ -118,6 +118,11 @@ function dependency_graph:create_nodes()
     ---@param object FactorioThing
     ---@param functor ObjectNodeFunctor
     local function process_object_type(object, functor)
+        -- Not real objects, they are used for parameterized blueprints in 2.0
+        if object.parameter then
+            return
+        end
+
         local object_node = object_node:new(object, object_node_descriptor:new(object.name, functor.object_type), self.object_nodes, self.configuration)
         functor.register_requirements_func(object_node, self.requirement_nodes)
     end
