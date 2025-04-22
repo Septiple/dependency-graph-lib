@@ -22,6 +22,7 @@ local technology_functor = require "functors.technology_functor"
 local tile_functor = require "functors.tile_functor"
 local victory_functor = require "functors.victory_functor"
 
+local entity_requirements = require "requirements.entity_requirements"
 local item_requirements = require "requirements.item_requirements"
 local planet_requirements = require "requirements.planet_requirements"
 
@@ -206,8 +207,7 @@ function dependency_graph:run_custom_mod_dependencies()
     end
 
     --TODO: figure out if this is in the raw data somehow
-    item_functor:add_fulfiller_for_typed_requirement(self.start_node, "crafting", requirement_types.recipe_category, self.requirement_nodes)
-    item_functor:add_fulfiller_for_typed_requirement(self.start_node, "basic-solid", requirement_types.resource_category, self.requirement_nodes)
+    item_functor:add_fulfiller_for_object_requirement(self.start_node, "character", object_types.entity, entity_requirements.instantiate, self.object_nodes)
     item_functor:add_fulfiller_for_object_requirement(self.start_node, "nauvis", object_types.planet, planet_requirements.visit, self.object_nodes)
 
     victory_functor:add_fulfiller_for_independent_requirement(self.object_nodes:find_object_node(object_node_descriptor:new("satellite", object_types.item)), requirement_types.victory, self.requirement_nodes)

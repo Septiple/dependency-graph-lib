@@ -126,6 +126,7 @@ function (object, requirement_nodes, object_nodes)
         object_node_functor:add_typed_requirement_to_object(object, entity.burner.fuel_categories, requirement_types.fuel_category, requirement_nodes)
     end
     object_node_functor:add_fulfiller_for_typed_requirement(object, entity.crafting_categories, requirement_types.recipe_category, requirement_nodes)
+    object_node_functor:add_fulfiller_for_typed_requirement(object, entity.mining_categories, requirement_types.resource_category, requirement_nodes)
 
     local fluid_boxes = entity.fluid_boxes or {}
     if entity.fluid_box then table.insert(fluid_boxes, entity.fluid_box) end
