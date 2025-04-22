@@ -95,7 +95,9 @@ function requirement_node:add_fulfiller(fulfiller)
     ---@diagnostic disable-next-line: invisible
     fulfiller:add_fulfiller(self)
 
-    log("Object " .. fulfiller.printable_name .. " is able to fulfil the requirement " .. self.printable_name)
+    if self.configuration.verbose_logging then
+        log("Object " .. fulfiller.printable_name .. " is able to fulfil the requirement " .. self.printable_name)
+    end
 end
 
 ---@package

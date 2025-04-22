@@ -59,7 +59,9 @@ function object_node:add_requirement(requirement)
     ---@diagnostic disable-next-line: invisible
     requirement:add_requiring_node(self)
 
-    log("Object " .. self.printable_name .. " has the requirement " .. requirement.printable_name)
+    if self.configuration.verbose_logging then
+        log("Object " .. self.printable_name .. " has the requirement " .. requirement.printable_name)
+    end
 end
 
 ---@package
