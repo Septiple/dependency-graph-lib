@@ -253,7 +253,7 @@ function dependency_graph:linearise_recipe_graph()
 
     for _, nodes in pairs(self.object_nodes.nodes) do
         for _, node in pairs(nodes) do
-            if not node:has_no_more_unfulfilled_requirements() then
+            if not node:has_no_more_unfulfilled_requirements() and not node.object.hidden then
                 log("Node " .. node.printable_name .. " still has unresolved dependencies: " .. node:print_dependencies())
             end
         end
