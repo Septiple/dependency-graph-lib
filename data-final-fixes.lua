@@ -4,9 +4,9 @@
 if mods["testmod"] and not mods["autotech"] then
     log("Creating test mod dependency graph")
     local dependency_graph = require "dependency_graph"
-    dependency_graph.create(data.raw, {verbose_logging = true})
+    graph = dependency_graph.create(data.raw, {verbose_logging = true})
     log("Running dependency graph")
-    dependency_graph:run()
+    graph:run()
     log("Finished test")
 end
 
