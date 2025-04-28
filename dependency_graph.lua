@@ -178,7 +178,7 @@ function dependency_graph:create_nodes()
     for category in pairs(module_categories) do -- module categories are not a real prototype. we can need to fake it by giving them a name and type.
         table.insert(_module_categories, {
             name = category,
-            type = "module-category",
+            -- type = "module-category",
         })
     end
 
