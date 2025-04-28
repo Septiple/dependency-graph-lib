@@ -6,6 +6,7 @@ local object_node = require "object_nodes.object_node"
 local object_types = require "object_nodes.object_types"
 local object_node_descriptor = require "object_nodes.object_node_descriptor"
 local object_node_storage = require "object_nodes.object_node_storage"
+local object_node_functor = require "object_nodes.object_node_functor"
 
 local requirement_node = require "requirement_nodes.requirement_node"
 local requirement_types = require "requirement_nodes.requirement_types"
@@ -44,6 +45,7 @@ functor_map[object_types.victory] = victory_functor
 --- @field private configuration Configuration
 --- @field private object_nodes ObjectNodeStorage
 --- @field private requirement_nodes RequirementNodeStorage
+--- @field private startup_nodes ObjectNode[]
 local dependency_graph = {}
 dependency_graph.__index = dependency_graph
 
@@ -57,6 +59,7 @@ function dependency_graph.create(data_raw, configuration)
     result.configuration = configuration
     result.object_nodes = object_node_storage:new()
     result.requirement_nodes = requirement_node_storage:new()
+    result.startup_nodes = {}
     return result
 end
 
@@ -124,8 +127,13 @@ function dependency_graph:create_nodes()
             return
         end
 
-        local object_node = object_node:new(object, object_node_descriptor:new(object.name, functor.object_type), self.object_nodes, self.configuration)
-        functor.register_requirements_func(object_node, self.requirement_nodes)
+        local node = object_node:new(object, object_node_descriptor:new(object.name, functor.object_type), self.object_nodes, self.configuration)
+        functor.register_requirements_func(node, self.requirement_nodes)
+
+        if object.autotech_startup then
+            table.insert(self.startup_nodes, node)
+            object.autotech_startup = nil -- clean up
+        end
     end
 
     ---@param table FactorioThingGroup
@@ -178,7 +186,7 @@ function dependency_graph:create_nodes()
     for category in pairs(module_categories) do -- module categories are not a real prototype. we can need to fake it by giving them a name and type.
         table.insert(_module_categories, {
             name = category,
-            -- type = "module-category",
+            type = "module-category",
         })
     end
 
@@ -192,23 +200,16 @@ function dependency_graph:link_nodes()
 end
 
 function dependency_graph:run_custom_mod_dependencies()
-    -- For now, this just adds vanilla startup stuff
-    local starting_items = self.configuration.starting_items or {
-        "iron-plate",
-        "wood",
-        "pistol",
-        "firearm-magazine",
-        "burner-mining-drill",
-        "stone-furnace",
-    }
-
-    for _, item in pairs(starting_items) do
-        item_functor:add_fulfiller_for_object_requirement(self.start_node, item, object_types.item, item_requirements.create, self.object_nodes)
+    -- Register startup nodes
+    for _, node in pairs(self.startup_nodes) do
+        if node.descriptor.object_type == object_types.item then
+            object_node_functor:add_fulfiller_for_object_requirement(self.start_node, node.object.name, object_types.item, item_requirements.create, self.object_nodes)
+        elseif node.descriptor.object_type == object_types.entity then
+            object_node_functor:add_fulfiller_for_object_requirement(self.start_node, node.object.name, object_types.entity, entity_requirements.instantiate, self.object_nodes)
+        elseif node.descriptor.object_type == object_types.planet then
+            object_node_functor:add_fulfiller_for_object_requirement(self.start_node, node.object.name, object_types.planet, planet_requirements.visit, self.object_nodes)
+        end
     end
-
-    --TODO: figure out if this is in the raw data somehow
-    item_functor:add_fulfiller_for_object_requirement(self.start_node, "character", object_types.entity, entity_requirements.instantiate, self.object_nodes)
-    item_functor:add_fulfiller_for_object_requirement(self.start_node, "nauvis", object_types.planet, planet_requirements.visit, self.object_nodes)
 
     victory_functor:add_fulfiller_for_independent_requirement(self.object_nodes:find_object_node(object_node_descriptor:new("satellite", object_types.item)), requirement_types.victory, self.requirement_nodes)
 

@@ -188,7 +188,7 @@ function object_node_functor:add_independent_requirement_to_object(object, sourc
 end
 
 ---@param object ObjectNode
----@param name string?
+---@param nameOrTable string | table
 ---@param requirement_type RequirementType
 ---@param requirement_nodes RequirementNodeStorage
 function object_node_functor:add_typed_requirement_to_object(object, nameOrTable, requirement_type, requirement_nodes)

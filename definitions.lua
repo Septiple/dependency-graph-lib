@@ -5,7 +5,7 @@
 --- @alias RequirementsRegistryFunction fun(object: ObjectNode, requirement_nodes: RequirementNodeStorage)
 --- @alias DependencyRegistryFunction fun(object: ObjectNode, requirement_nodes: RequirementNodeStorage, object_nodes: ObjectNodeStorage)
 
---- @alias FactorioThing { name: string }
+--- @alias FactorioThing { name: string, type: string, category: string }
 --- @alias FactorioThingGroup table<string, FactorioThing>
 --- @alias DataRaw table<string, FactorioThingGroup>
 
