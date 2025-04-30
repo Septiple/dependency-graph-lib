@@ -2,6 +2,7 @@
 local entity_requirements = {
     instantiate = "instantiate",
     required_fluid = "required_fluid",
+    required_mining_fluid = "required_mining_fluid",
     required_burnable_fluid = "required_burnable_fluid",
     -- not so sure about the next ones, let's think about them later
     requires_agri_tower = "grow",

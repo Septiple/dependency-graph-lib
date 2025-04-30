@@ -48,7 +48,7 @@ function (object, requirement_nodes)
 
     local minable = entity.minable
     if minable and minable.required_fluid then
-        requirement_node:add_new_object_dependent_requirement(entity_requirements.required_fluid, object, requirement_nodes, object.configuration)
+        requirement_node:add_new_object_dependent_requirement(entity_requirements.required_mining_fluid, object, requirement_nodes, object.configuration)
     end
 
     if entity.energy_source and entity.energy_source.type == "fluid" and entity.energy_source.fluid_box.filter then
@@ -80,7 +80,7 @@ function (object, requirement_nodes, object_nodes)
     if minable ~= nil then
         object_node_functor:add_fulfiller_to_productlike_object(object, minable.results or minable.result, object_nodes)
         if minable.required_fluid then
-            object_node_functor:reverse_add_fulfiller_for_object_requirement(object, entity_requirements.required_fluid, minable.required_fluid, object_types.fluid, object_nodes)
+            object_node_functor:reverse_add_fulfiller_for_object_requirement(object, entity_requirements.required_mining_fluid, minable.required_fluid, object_types.fluid, object_nodes)
         end
     end
     
@@ -113,7 +113,7 @@ function (object, requirement_nodes, object_nodes)
             object_node_functor:add_independent_requirement_to_object(object, requirement_types.heat, requirement_nodes)
         elseif type == "fluid" then
             if energy_source.fluid_box.filter then
-                object_node_functor:reverse_add_fulfiller_for_object_requirement(object, entity_requirements.required_fluid, energy_source.fluid_box.filter, object_types.fluid, object_nodes)
+                object_node_functor:reverse_add_fulfiller_for_object_requirement(object, entity_requirements.required_burnable_fluid, energy_source.fluid_box.filter, object_types.fluid, object_nodes)
             else
                 object_node_functor:add_independent_requirement_to_object(object, requirement_types.fluid_with_fuel_value, requirement_nodes)
             end
