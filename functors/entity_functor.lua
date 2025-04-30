@@ -51,8 +51,13 @@ function (object, requirement_nodes)
         requirement_node:add_new_object_dependent_requirement(entity_requirements.required_mining_fluid, object, requirement_nodes, object.configuration)
     end
 
-    if entity.energy_source and entity.energy_source.type == "fluid" and entity.energy_source.fluid_box.filter then
-        requirement_node:add_new_object_dependent_requirement(entity_requirements.required_burnable_fluid, object, requirement_nodes, object.configuration)
+    if entity.energy_source then
+        if entity.energy_source.type == "fluid" and entity.energy_source.fluid_box.filter then
+            requirement_node:add_new_object_dependent_requirement(entity_requirements.required_burnable_fluid, object, requirement_nodes, object.configuration)
+        end
+        if entity.energy_source.type == "heat" then
+            requirement_node:create_or_get_typed_requirement(tostring(entity.energy_source.min_working_temperature or 15), requirement_types.heat, requirement_nodes, object.configuration)
+        end
     end
 
     local fluid_boxes = entity.fluid_boxes or {}
@@ -110,7 +115,7 @@ function (object, requirement_nodes, object_nodes)
         elseif type == "burner" then
             object_node_functor:add_typed_requirement_to_object(object, energy_source.fuel_categories, requirement_types.fuel_category, requirement_nodes)
         elseif type == "heat" then
-            object_node_functor:add_independent_requirement_to_object(object, requirement_types.heat, requirement_nodes)
+            object_node_functor:add_typed_requirement_to_object(object, tostring(entity.energy_source.min_working_temperature or 15), requirement_types.heat, requirement_nodes)
         elseif type == "fluid" then
             if energy_source.fluid_box.filter then
                 object_node_functor:reverse_add_fulfiller_for_object_requirement(object, entity_requirements.required_burnable_fluid, energy_source.fluid_box.filter, object_types.fluid, object_nodes)
@@ -141,10 +146,17 @@ function (object, requirement_nodes, object_nodes)
         end
     end
     
-    if entity.type == "reactor" or entity.type == "heat-interface" then
-        object_node_functor:add_fulfiller_for_independent_requirement(object, requirement_types.heat, requirement_nodes)
+    if (entity.type == "reactor" or entity.type == "heat-interface") and entity.heat_buffer then
+        local provided_temperature = entity.heat_buffer.max_temperature
+        requirement_nodes:for_all_nodes_of_type(requirement_types.heat, function (requirement)
+            local required_temperature = tonumber(requirement.descriptor.name)
+            if provided_temperature >= required_temperature then
+                object_node_functor:add_fulfiller_for_typed_requirement(object, requirement.descriptor.name, requirement_types.heat, requirement_nodes)
+            end
+        end)
     end
 
+    
     if entity.type == "lab" then
         local inputs = entity.inputs
         local input_lookup = {}

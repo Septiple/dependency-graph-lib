@@ -64,6 +64,20 @@ function requirement_node:new_typed_requirement(name, source, requirement_nodes,
 end
 
 ---@param name string
+---@param source RequirementType
+---@param requirement_nodes RequirementNodeStorage
+---@param configuration Configuration
+---@return RequirementNode
+function requirement_node:create_or_get_typed_requirement(name, source, requirement_nodes, configuration)
+    local descriptor = requirement_descriptor:new_typed_requirement_descriptor(name, source)
+    local maybe_node = requirement_nodes:find_requirement_node(descriptor)
+    if maybe_node then
+        return maybe_node
+    end
+    return self:new(descriptor, requirement_nodes, configuration)
+end
+
+---@param name string
 ---@param source_object ObjectNode
 ---@param requirement_nodes RequirementNodeStorage
 ---@param configuration Configuration

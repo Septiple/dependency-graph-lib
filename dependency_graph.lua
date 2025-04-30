@@ -106,10 +106,11 @@ function dependency_graph:create_nodes()
     self.victory_node = object_node:new({name="victory"}, object_node_descriptor:unique_node(object_types.victory), self.object_nodes, self.configuration)
     requirement_node:new_independent_requirement(requirement_types.electricity, self.requirement_nodes, self.configuration)
     requirement_node:new_independent_requirement(requirement_types.fluid_with_fuel_value, self.requirement_nodes, self.configuration)
-    requirement_node:new_independent_requirement(requirement_types.heat, self.requirement_nodes, self.configuration)
     requirement_node:new_independent_requirement(requirement_types.rocket_silo, self.requirement_nodes, self.configuration)
     requirement_node:new_independent_requirement(requirement_types.cargo_landing_pad, self.requirement_nodes, self.configuration)
     requirement_node:new_independent_requirement(requirement_types.victory, self.requirement_nodes, self.configuration)
+
+    self.requirement_nodes:register_requirement_type(requirement_types.heat)
 
     ---@param table FactorioThingGroup
     ---@param requirement_type RequirementType

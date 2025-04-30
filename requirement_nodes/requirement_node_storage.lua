@@ -14,6 +14,11 @@ function requirement_node_storage:new()
     return result
 end
 
+---@param requirement_type RequirementType
+function requirement_node_storage:register_requirement_type(requirement_type)
+    self.nodes[requirement_type] = {}
+end
+
 ---@param requirement_node RequirementNode
 function requirement_node_storage:add_requirement_node(requirement_node)
     local descriptor = requirement_node.descriptor
@@ -40,6 +45,14 @@ function requirement_node_storage:for_all_nodes(functor)
         for _, requirement in pairs(requirement_set) do
             functor(source, requirement)
         end
+    end
+end
+
+---@param requirement_type RequirementType
+---@param functor fun(requirement: RequirementNode)
+function requirement_node_storage:for_all_nodes_of_type(requirement_type, functor)
+    for _, requirement in pairs(self.nodes[requirement_type]) do
+        functor(requirement)
     end
 end
 
