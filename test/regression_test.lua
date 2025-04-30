@@ -1,5 +1,6 @@
-local json = require "utils/json"
+local apply_vanilla_rules = require "apply_vanilla_rules"
 local dependency_graph = require "dependency_graph"
+local json = require "utils/json"
 
 local start_time = os.time()
 local write = io.write
@@ -34,6 +35,7 @@ _G.data = {}
 local content_as_string = f:read("*all")
 f:close()
 local data_raw = json.parse(content_as_string)
+apply_vanilla_rules(data_raw)
 
 print("Invoking dependency graph...")
 
