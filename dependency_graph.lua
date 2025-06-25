@@ -271,6 +271,13 @@ function dependency_graph:verify_victory_reachable_recipe_graph()
     end
 end
 
+---@param functor fun(object_type: ObjectType, object: ObjectNode)
+function dependency_graph:for_all_nodes(functor)
+    self.object_nodes:for_all_nodes(functor)
+end
+
+---@param object_type ObjectType
+---@param functor fun(object: ObjectNode)
 function dependency_graph:for_all_nodes_of_type(object_type, functor)
     self.object_nodes:for_all_nodes_of_type(object_type, functor)
 end
