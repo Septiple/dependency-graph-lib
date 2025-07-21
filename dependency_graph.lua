@@ -155,6 +155,7 @@ function dependency_graph:create_nodes()
 
     process_object_types(self.data_raw["autoplace-control"], autoplace_control_functor)
     process_object_types(self.data_raw["fish"], autoplace_control_functor)
+    process_object_types(self.data_raw["tree"], autoplace_control_functor)
     process_object_types(self.data_raw["simple-entity"], autoplace_control_functor)
     process_object_types(self.data_raw["fluid"], fluid_functor)
     process_object_types(self.data_raw["recipe"], recipe_functor)
