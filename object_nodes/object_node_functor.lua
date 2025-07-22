@@ -99,7 +99,7 @@ function object_node_functor:reverse_add_fulfiller_for_object_requirement(requir
     if fulfiller ~= nil then
         node:add_fulfiller(fulfiller)
     elseif node.configuration.verbose_logging then
-        log("Object " .. descriptor.name .. " could not be found so cannot fulfil requirement " .. self.printable_name)
+        log("Object " .. descriptor.name .. " could not be found so cannot fulfil requirement " .. node.printable_name)
     end
 end
 
